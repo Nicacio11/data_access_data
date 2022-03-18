@@ -47,6 +47,7 @@ namespace DataAccessDapper
                 //CreateManyCategory(connection);
                 //ListCategories(connection);
                 ExecuteProcedure(connection);
+                ExecuteScalarCategory(connection);
             }
         }
         static void ListCategories(SqlConnection connection)
@@ -138,6 +139,38 @@ namespace DataAccessDapper
             var procedure = "[procedure]";
 
             connection.Query<Category>(procedure, commandType: CommandType.StoredProcedure);
+        }
+    
+        ///<Summary>
+        /// Executa e retorna o que foi gerado pelo sql
+        /// SELECT SCOPE_IDENTITY() só funciona com id IDENTITY
+        /// output inserted.[Id] -> funciona para guids
+        ///</Summary>
+        static void ExecuteScalarCategory(SqlConnection connection)
+        {
+            var insert = 
+            @"INSERT INTO CATEGORY 
+            OUTPUT inserted.[Id]
+            VALUES(NEWID(), 
+            @Title, 
+            @Url, 
+            @Summary, 
+            @Order,  
+            @Description, 
+            @Featured)";
+
+            var categoryInsert = new Category()
+            {
+                Title = "Amazon WS",
+                Url = "Amazon",
+                Description = "Serviços WS",
+                Order = 8,
+                Summary = "Aws CLOUD"
+            };
+
+            var id = connection.ExecuteScalar<Guid>(insert, categoryInsert);
+            Console.WriteLine($"{id} gerado");
+
         }
     }
 
