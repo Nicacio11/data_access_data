@@ -133,6 +133,12 @@ namespace DataAccessDapper
 
             connection.Execute(sql, @params, commandType: CommandType.StoredProcedure);
         }
+        static void ExecuteReadProcedure(SqlConnection connection)
+        {
+            var procedure = "[procedure]";
+
+            connection.Query<Category>(procedure, commandType: CommandType.StoredProcedure);
+        }
     }
 
 }
