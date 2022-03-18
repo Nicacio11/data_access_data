@@ -58,6 +58,14 @@ namespace DataAccessDapper
                      Console.WriteLine($"{category.Id} - {category.Title}");
                 }
         }
+        static void ReadView(SqlConnection connection)
+        {
+             var categories = connection.Query<Category>("Select [id], [title] from [vwCategory]");
+
+                foreach(var category in categories){
+                     Console.WriteLine($"{category.Id} - {category.Title}");
+                }
+        }
         static void CreateCategory(SqlConnection connection)
         {
             var insert = 
