@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
 using Dapper;
 using DataAccessDapper.Models;
 using Microsoft.Data.SqlClient;
@@ -43,8 +44,9 @@ namespace DataAccessDapper
             {
 
                 //UpdateCategory(connection);
-                CreateManyCategory(connection);
-                ListCategories(connection);
+                //CreateManyCategory(connection);
+                //ListCategories(connection);
+                ExecuteProcedure(connection);
             }
         }
         static void ListCategories(SqlConnection connection)
@@ -124,5 +126,13 @@ namespace DataAccessDapper
 
         }
     
+        static void ExecuteProcedure(SqlConnection connection)
+        {
+            var sql = "[spDeleteStudent]";
+            var @params = new {StudentId = "c28908af-df0d-4457-97e2-0018669e4b9c" };
+
+            connection.Execute(sql, @params, commandType: CommandType.StoredProcedure);
+        }
     }
+
 }
