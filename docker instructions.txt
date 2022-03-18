@@ -1,0 +1,22 @@
+baixando a imagem
+docker pull mcr.microsoft.com/mssql/server
+
+rodando a imagem
+docker run --name sqlserver -e "ACCEPT_EULA=Y" -e "MSSQL_SA_PASSWORD=1q2w3e4r@#$" -p 1433:1433 -d mcr.microsoft.com/mssql/server
+
+connectstring
+Server=localhost,1433;Database=balta;User ID=sa;Password=1q2w3e4r@#$
+
+
+Erros comuns
+A connection was successfully established with the server, but then an error occurred during the pre-login handshake. (provider: SSL Provider
+Nas novas versões da imagem do SQL Server, no Windows, tem ocorrido um problema de SSL. Para resolver este problema, primeiro execute os seguintes comandos:
+
+dotnet dev-certs https --clean
+dotnet dev-certs https --trust
+
+Server=localhost,1433;Database=balta;User ID=sa;Password=1q2w3e4r@#$;Trusted_Connection=False; TrustServerCertificate=True;
+
+
+logando com o windows não precisa colocar a portal
+ex localhost\SQLEXPRESS
