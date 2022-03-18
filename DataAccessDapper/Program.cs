@@ -46,8 +46,10 @@ namespace DataAccessDapper
                 //UpdateCategory(connection);
                 //CreateManyCategory(connection);
                 //ListCategories(connection);
-                ExecuteProcedure(connection);
-                ExecuteScalarCategory(connection);
+                //ExecuteProcedure(connection);
+                //ExecuteScalarCategory(connection);
+                OneToOne(connection);
+
             }
         }
         static void ListCategories(SqlConnection connection)
@@ -179,6 +181,22 @@ namespace DataAccessDapper
             var id = connection.ExecuteScalar<Guid>(insert, categoryInsert);
             Console.WriteLine($"{id} gerado");
 
+        }
+        
+        static void OneToOne(SqlConnection connection)
+        {
+            var sql = "SELECT [CareerItem].[CareerId] as Id, [CareerItem].[Title], [Course].[Id], [Course].[Title] FROM [CareerItem] INNER JOIN [Course] on [CareerItem].[CourseId] = [Course].[Id]";
+
+            var items = connection.Query<CareerItem, Course, CareerItem>(sql, (careerItem, course) => 
+            {
+                careerItem.Course = course;
+                return careerItem;
+            }, splitOn: "Id");
+
+            foreach (var item in items)
+            {
+                Console.WriteLine($"id: {item.Id} - Title: {item.Title}");
+            }
         }
     }
 
