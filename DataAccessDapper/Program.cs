@@ -52,7 +52,8 @@ namespace DataAccessDapper
                 //OneToOne(connection);
                 //OneToMany(connection);
                 //QueryMultiple(connection);
-                SelectIn(connection);
+                //SelectIn(connection);
+                Like(connection, "api");
 
             }
         }
@@ -274,6 +275,21 @@ namespace DataAccessDapper
             foreach (var career in careers)
             {
                 Console.WriteLine($"Career - id: {career.Id} - Title: {career.Title}");
+            }
+        }
+
+        static void Like(SqlConnection connection, string term)
+        {
+
+            var query = "select * FROM [Course] where [Title] like @exp";
+
+            var courses = connection.Query<Course>(query, new {
+                exp = $"%{term}%"
+            });
+
+            foreach (var course in courses)
+            {
+                Console.WriteLine($"Course - id: {course.Id} - Title: {course.Title}");
             }
         }
     
