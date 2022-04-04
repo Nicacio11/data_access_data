@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Linq;
 using Dapper;
 using DataAccessDapper.Models;
 using Microsoft.Data.SqlClient;
@@ -48,7 +49,8 @@ namespace DataAccessDapper
                 //ListCategories(connection);
                 //ExecuteProcedure(connection);
                 //ExecuteScalarCategory(connection);
-                OneToOne(connection);
+                //OneToOne(connection);
+                OneToMany(connection);
 
             }
         }
@@ -196,6 +198,38 @@ namespace DataAccessDapper
             foreach (var item in items)
             {
                 Console.WriteLine($"id: {item.Id} - Title: {item.Title}");
+            }
+        }
+    
+        static void OneToMany(SqlConnection connection)
+        {
+            var sql = "SELECT [Career].[Id], [Career].[Title], [CareerItem].[CareerId] as Id, [CareerItem].[Title] FROM [Career] INNER JOIN [CareerItem] on [Career].[Id] = [CareerItem].[CareerId]";
+            
+            var careers = new List<Career>();
+            var items = connection.Query<Career, CareerItem, Career>(sql, (career, careerItem) => 
+            {
+                var car = careers.FirstOrDefault(x => x.Id == career.Id);
+                if(car == null)
+                {
+                    car = career;
+                    car.CareerItems.Add(careerItem);
+                    careers.Add(car);
+                }
+                else
+                {
+                    car.CareerItems.Add(careerItem);
+                }
+                return career;
+            }, splitOn: "Id");
+
+            foreach (var item in careers)
+            {
+                Console.WriteLine($"id: {item.Id} - Title: {item.Title}");
+
+                foreach (var carrer in item.CareerItems)
+                {
+                    Console.WriteLine($" - id: {carrer.Id} - Title: {carrer.Title}");
+                }
             }
         }
     }
