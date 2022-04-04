@@ -50,7 +50,8 @@ namespace DataAccessDapper
                 //ExecuteProcedure(connection);
                 //ExecuteScalarCategory(connection);
                 //OneToOne(connection);
-                OneToMany(connection);
+                //OneToMany(connection);
+                QueryMultiple(connection);
 
             }
         }
@@ -232,6 +233,29 @@ namespace DataAccessDapper
                 }
             }
         }
+
+        static void QueryMultiple(SqlConnection connection)
+        {
+            var query = "SELECT * FROM [Category]; SELECT * FROM [Course]";
+
+            using(var mult = connection.QueryMultiple(query))
+            {
+                var categories = mult.Read<Category>();
+                var courses = mult.Read<Course>();
+
+                foreach (var category in categories)
+                {
+                    Console.WriteLine($"Category - id: {category.Id} - Title: {category.Title}");
+                }
+
+                foreach (var course in courses)
+                {
+                    Console.WriteLine($"Course - id: {course.Id} - Title: {course.Title}");
+                }
+
+            }
+        }
+    
     }
 
 }
