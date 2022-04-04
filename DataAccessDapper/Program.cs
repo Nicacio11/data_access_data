@@ -51,7 +51,8 @@ namespace DataAccessDapper
                 //ExecuteScalarCategory(connection);
                 //OneToOne(connection);
                 //OneToMany(connection);
-                QueryMultiple(connection);
+                //QueryMultiple(connection);
+                SelectIn(connection);
 
             }
         }
@@ -236,12 +237,13 @@ namespace DataAccessDapper
 
         static void QueryMultiple(SqlConnection connection)
         {
-            var query = "SELECT * FROM [Category]; SELECT * FROM [Course]";
+            var query = "SELECT * FROM [Category]; SELECT * FROM [Course]; SELECT * FROM [Career]";
 
             using(var mult = connection.QueryMultiple(query))
             {
                 var categories = mult.Read<Category>();
                 var courses = mult.Read<Course>();
+                var careers = mult.Read<Career>();
 
                 foreach (var category in categories)
                 {
@@ -253,6 +255,25 @@ namespace DataAccessDapper
                     Console.WriteLine($"Course - id: {course.Id} - Title: {course.Title}");
                 }
 
+                foreach (var career in careers)
+                {
+                    Console.WriteLine($"Career - id: {career.Id} - Title: {career.Title}");
+                }
+
+            }
+        }
+    
+        static void SelectIn(SqlConnection connection)
+        {
+            var query = "select * from Career where id in @id";
+
+            var careers = connection.Query<Career>(query, new {
+                id = new[]{ "4327ac7e-963b-4893-9f31-9a3b28a4e72b", "92d7e864-bea5-4812-80cc-c2f4e94db1af"}
+            });
+
+            foreach (var career in careers)
+            {
+                Console.WriteLine($"Career - id: {career.Id} - Title: {career.Title}");
             }
         }
     
