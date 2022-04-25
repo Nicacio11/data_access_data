@@ -53,7 +53,8 @@ namespace DataAccessDapper
                 //OneToMany(connection);
                 //QueryMultiple(connection);
                 //SelectIn(connection);
-                Like(connection, "api");
+                //Like(connection, "api");
+                Transaction(connection);
 
             }
         }
@@ -293,6 +294,33 @@ namespace DataAccessDapper
             }
         }
     
+        static void Transaction(SqlConnection connection)
+        {
+            connection.Open();
+            var insert = 
+            @"INSERT INTO CATEGORY VALUES(@Id, 
+            @Title, 
+            @Url, 
+            @Summary, 
+            @Order,  
+            @Description, 
+            @Featured)";
+
+            var categoryInsert = new Category()
+            {
+                Id = Guid.NewGuid(),
+                Title = "Amazon WS quero salvar",
+                Url = "Amazon",
+                Description = "Serviços WS",
+                Order = 8,
+                Summary = "Aws CLOUD"
+            };
+            using(var transaction = connection.BeginTransaction())
+            {
+                var rows = connection.Execute(insert, categoryInsert, transaction);
+                transaction.Commit();
+            }
+        }
     }
 
 }
